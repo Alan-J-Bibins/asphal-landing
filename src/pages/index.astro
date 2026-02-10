@@ -4,54 +4,66 @@ import Layout from "../layouts/Layout.astro"
 
 <Layout>
     <div id="canvas-container" class="fixed top-0 left-0 w-full h-full -z-10 opacity-40"></div>
-    <main id="smooth-content">
-        <header class="border-b border-b-accent w-full p-6 bg-background/10 backdrop-blur-sm">
-            <div class="flex gap-2 items-center">
-                <img 
-                    src="/favicon.svg"
-                    height="200"
-                    class="w-14"
-                />
-                <h1 class="text-4xl bg-clip-text text-transparent bg-linear-to-r from-primary to-secondary [-webkit-text-stroke:0.2px_var(--color-accent)]">Asphal</h1>
-            </div>
+    
+    <main id="smooth-wrapper">
+        <div id="smooth-content">
+            <header class="border-b border-b-accent w-full p-6 bg-background/10 backdrop-blur-sm">
+                <div class="flex gap-2 items-center">
+                    <img src="/favicon.svg" height="200" class="w-14" />
+                    <h1 class="text-4xl bg-clip-text text-transparent bg-linear-to-r from-primary to-secondary [-webkit-text-stroke:0.2px_var(--color-accent)]">Asphal</h1>
+                </div>
+            </header>
 
-        </header>
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <section class="flex flex-col justify-center items-center gap-3">
-            <h1 class="text-center text-6xl bg-clip-text text-transparent bg-linear-to-r from-primary to-secondary">Proactive Security,<br/> Automated Defense</h1>
-            <p class="text-xl text-center w-1/2">Asphal is an AI-native cybersecurity startup building autonomous systems that protect modern applications at both the source code and runtime levels.</p>
-            <button class="fancy-button">Secure Your Pipeline</button>
-        </section>
+            <br /><br /><br /><br /><br /><br />
 
-        <div class="h-screen flex flex-col justify-center items-center">
+            <section class="flex flex-col justify-center items-center gap-3">
+                <h1 class="text-center text-6xl bg-clip-text text-transparent bg-linear-to-r from-primary to-secondary font-bold tracking-tighter">Proactive Security,<br/> Automated Defense</h1>
+                <p class="text-xl text-center w-1/2">Asphal is an AI-native cybersecurity startup building autonomous systems that protect modern applications at both the source code and runtime levels.</p>
+                <button class="fancy-button">Secure Your Pipeline</button>
+            </section>
+
+            <div class="h-screen flex flex-col justify-center items-center"></div>
+
+            <section id="section-two" class="h-screen flex items-center justify-start px-20">
+                <div class="flex flex-col gap-3 w-1/2 p-12 bg-primary/5 backdrop-blur-xs border-2 border-primary border-dashed hover:border-accent transition-all">
+                    <h2 class="text-4xl font-bold mb-4 leading-0 text-secondary uppercase tracking-tight">The "Secure" Pipeline is a Myth.</h2>
+                    <hr class="border-secondary w-full border-dashed"/>
+                    <p class="text-2xl font-medium">90% of breaches exploit known vulnerabilities that were already "cleared" by manual audits.</p>
+                </div>
+            </section>
+
+            <section id="section-three" class="h-screen flex items-center justify-end px-20">
+                <div class="flex flex-col gap-3 w-1/2 p-12 bg-secondary/5 backdrop-blur-xs border-2 border-secondary border-dashed hover:border-accent transition-all text-right">
+                    <h2 class="text-4xl font-bold mb-4 leading-0 text-primary uppercase tracking-tight">Heimdall: Runtime Immunity</h2>
+                    <hr class="border-primary w-full border-dashed"/>
+                    <p class="text-2xl font-medium">ML-Powered WAF that analyzes traffic at the transport layer to stop zero-days in real-time.</p>
+                </div>
+            </section>
+
+            <section id="section-four" class="h-screen flex items-center justify-start px-20">
+                <div class="flex flex-col gap-3 w-1/2 p-12 bg-primary/5 backdrop-blur-xs border-2 border-primary border-dashed hover:border-accent transition-all">
+                    <h2 class="text-4xl font-bold mb-4 leading-0 text-secondary uppercase tracking-tight">Anteater: Agentic Defense</h2>
+                    <hr class="border-secondary w-full border-dashed"/>
+                    <p class="text-2xl font-medium">Autonomously discovers, exploits, and remediates source code vulnerabilities before attackers do.</p>
+                </div>
+            </section>
+
+            <div class="h-[30vh]"></div>
         </div>
-
-        <section id="section-two" class="h-screen flex items-center justify-start px-20">
-            <div class="flex flex-col gap-3 w-1/2 p-12 bg-primary/5 backdrop-blur-xs border-2 border-primary border-dashed hover:border-accent transition-all">
-                <h2 class="text-4xl font-bold mb-4 leading-0 text-secondary">The "Secure" Pipeline is a Myth.</h2>
-                <hr class="border-secondary w-full border-dashed"/>
-                <p class="text-2xl">90% of breaches exploit known vulnerabilities that were already "cleared" by manual audits.</p>
-            </div>
-        </section>
-
     </main>
 </Layout>
 
-
 <script>
 import {gsap} from 'gsap';
-import { ScrollSmoother } from 'gsap/all';
-import { ScrollTrigger } from 'gsap/all';
+import { ScrollSmoother } from 'gsap/ScrollSmoother';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import * as THREE from 'three';
 
 gsap.registerPlugin(ScrollTrigger, ScrollSmoother);
 
 ScrollSmoother.create({
+    wrapper: '#smooth-wrapper',
+    content: '#smooth-content',
     smooth: 1.5,
     effects: true,
     smoothTouch: 1,
@@ -66,40 +78,21 @@ renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.setPixelRatio(window.devicePixelRatio);
 container.appendChild(renderer.domElement);
 
-// Lighting first
-const pointLight = new THREE.PointLight(0xffffff, 100);
-pointLight.position.set(0, -8, 5);
+const pointLight = new THREE.PointLight(0xffffff, 150);
+pointLight.position.set(0, 5, 10);
 scene.add(pointLight);
 
-// Objects second
-const asphalCore = new THREE.Group();
-
-const geometry = new THREE.IcosahedronGeometry(10, 2);
-const material = new THREE.MeshBasicMaterial({ 
-    color: 0xFC8374,
-    wireframe: true,
-    transparent: true,
-    opacity: .4,
-    side: THREE.BackSide,
-});
-const core = new THREE.Mesh(geometry, material);
-
-const pointsMaterial = new THREE.PointsMaterial({ color: 0xFC8374, size: 0.1 });
-const points = new THREE.Points(geometry, pointsMaterial);
-
-asphalCore.add(core);
-asphalCore.add(points);
-scene.add(asphalCore);
-
-camera.position.z = 5;
-
+// --- AGGRESSIVE DITHER SHADER ---
 const ditherVertex = `
 varying vec2 vUv;
 varying vec3 vNormal;
+varying vec3 vViewPosition;
 void main() {
-vUv = uv;
-vNormal = normalize(normalMatrix * normal);
-gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+    vUv = uv;
+    vNormal = normalize(normalMatrix * normal);
+    vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
+    vViewPosition = -mvPosition.xyz;
+    gl_Position = projectionMatrix * mvPosition;
 }
 `;
 
@@ -107,96 +100,106 @@ const ditherFragment = `
 varying vec2 vUv;
 varying vec3 vNormal;
 uniform vec3 uLightPos; 
-uniform float uTime;
+uniform vec3 uColor;
 
 float dither(vec2 position, float brightness) {
-int x = int(mod(position.x, 4.0));
-int y = int(mod(position.y, 4.0));
-float limit = 0.0;
-
-if (x == 0) {
-if (y == 0) limit = 0.0625; else if (y == 1) limit = 0.5625; else if (y == 2) limit = 0.1875; else limit = 0.6875;
-} else if (x == 1) {
-if (y == 0) limit = 0.8125; else if (y == 1) limit = 0.3125; else if (y == 2) limit = 0.9375; else limit = 0.4375;
-} else if (x == 2) {
-if (y == 0) limit = 0.25; else if (y == 1) limit = 0.75; else if (y == 2) limit = 0.125; else limit = 0.625;
-} else {
-if (y == 0) limit = 1.0; else if (y == 1) limit = 0.5; else if (y == 2) limit = 0.875; else limit = 0.375;
-}
-
-return brightness < limit ? 0.0 : 1.0;
+    // Aggressive pixelation: scale the coordinates
+    vec2 p = floor(position / 2.0); 
+    int x = int(mod(p.x, 4.0));
+    int y = int(mod(p.y, 4.0));
+    
+    // Banding logic: Quantize brightness into 5 steps
+    float b = floor(brightness * 5.0) / 5.0;
+    
+    float limit = 0.0;
+    if (x == 0) { if (y == 0) limit = 0.0625; else if (y == 1) limit = 0.5625; else if (y == 2) limit = 0.1875; else limit = 0.6875; }
+    else if (x == 1) { if (y == 0) limit = 0.8125; else if (y == 1) limit = 0.3125; else if (y == 2) limit = 0.9375; else limit = 0.4375; }
+    else if (x == 2) { if (y == 0) limit = 0.25; else if (y == 1) limit = 0.75; else if (y == 2) limit = 0.125; else limit = 0.625; }
+    else { if (y == 0) limit = 1.0; else if (y == 1) limit = 0.5; else if (y == 2) limit = 0.875; else limit = 0.375; }
+    
+    return b < limit ? 0.0 : 1.0;
 }
 
 void main() {
-// 1. Calculate lighting based on the real light position uniform
-// We normalize the vector from the object center (0,0,0) to the light position
-vec3 lightDir = normalize(uLightPos); 
-float light = dot(vNormal, lightDir) * 0.5 + 0.5;
-
-// 2. Get the dither value (0.0 or 1.0)
-float ditherVal = dither(gl_FragCoord.xy, light);
-
-// 3. Apply Asphal Brand Color (0xFC8374)
-vec3 color = vec3(0.98, 0.51, 0.45) * ditherVal;
-
-gl_FragColor = vec4(color, 1.0);
+    vec3 lightDir = normalize(uLightPos); 
+    float diffuse = dot(vNormal, lightDir) * 0.5 + 0.5;
+    
+    // Apply aggressive dithering
+    float ditherVal = dither(gl_FragCoord.xy, diffuse);
+    
+    gl_FragColor = vec4(uColor * ditherVal, 1.0);
 }
 `;
 
-const cubeGeometry = new THREE.BoxGeometry(2,2,2);
+// --- OBJECTS ---
+const asphalCore = new THREE.Group();
+const geometry = new THREE.IcosahedronGeometry(20, 2);
+const material = new THREE.MeshBasicMaterial({ 
+    color: 0xFC8374, 
+    wireframe: true, 
+    transparent: true, 
+    opacity: .2, 
+    side: THREE.BackSide 
+});
+const core = new THREE.Mesh(geometry, material);
+const points = new THREE.Points(geometry, new THREE.PointsMaterial({ color: 0xFC8374, size: 0.1 }));
+asphalCore.add(core, points);
+scene.add(asphalCore);
 
-const cubeMaterial = new THREE.ShaderMaterial({
+const baseUniforms = { uLightPos: { value: pointLight.position } };
+
+// Section 2: Red Cube
+const cubeMat = new THREE.ShaderMaterial({
     vertexShader: ditherVertex,
     fragmentShader: ditherFragment,
-    uniforms: {
-        uTime: { value: 0 },
-        uLightPos: { value: pointLight.position }
-    }
+    uniforms: { ...baseUniforms, uColor: { value: new THREE.Color(0xff2222) } }
 });
-
-
-const cubeMesh = new THREE.Mesh(cubeGeometry,cubeMaterial);
+const cubeMesh = new THREE.Mesh(new THREE.BoxGeometry(3,3,3), cubeMat);
+cubeMesh.position.set(10, -6, 2);
 scene.add(cubeMesh);
 
-cubeMesh.position.set(7,-4,2)
-cubeMesh.rotation.set(1,1,2);
+// Section 3: Cyan Octahedron
+const octaMat = new THREE.ShaderMaterial({
+    vertexShader: ditherVertex,
+    fragmentShader: ditherFragment,
+    uniforms: { ...baseUniforms, uColor: { value: new THREE.Color(0x00f2ff) } }
+});
+const octaMesh = new THREE.Mesh(new THREE.OctahedronGeometry(3, 0), octaMat);
+octaMesh.position.set(-12, -18, 2);
+scene.add(octaMesh);
 
+// Section 4: Anteater Torus Knot (Agentic/Recursive)
+const torusMat = new THREE.ShaderMaterial({
+    vertexShader: ditherVertex,
+    fragmentShader: ditherFragment,
+    uniforms: { ...baseUniforms, uColor: { value: new THREE.Color(0xFC8374) } }
+});
+const torusMesh = new THREE.Mesh(new THREE.TorusKnotGeometry(2, 0.6, 100, 16), torusMat);
+torusMesh.position.set(10, -30, 2);
+scene.add(torusMesh);
 
-gsap.to(asphalCore.rotation, {
-    y: Math.PI * 2,
-    x: Math.PI,
-    duration: 40,
-    repeat: -1,
-    ease: "none"
+// --- ANIMATION ---
+camera.position.set(0, 0, 0);
+
+gsap.to(asphalCore.rotation, { y: Math.PI * 2, duration: 50, repeat: -1, ease: "none" });
+[cubeMesh, octaMesh, torusMesh].forEach(m => {
+    gsap.to(m.rotation, { y: Math.PI * 2, x: Math.PI, duration: 15, repeat: -1, ease: "none" });
 });
 
-gsap.to(cubeMesh.rotation, {
-    y: Math.PI * 2,
-    x: Math.PI,
-    duration: 10,
-    repeat: -1,
-})
-
+// SCROLL TIMELINE
 const tl = gsap.timeline({
-    paused: true,
     scrollTrigger: {
         trigger: '#section-two',
-        markers:false,
+        start: "top bottom",
+        endTrigger: "#section-four",
+        end: "bottom bottom",
         scrub: true,
     }
-})
+});
 
-tl.fromTo(camera.position,
-    {
-        x:0,y:0,z:0
-    },
-    {
-        y:-5,
-        z: 8,
-        x: 5,
-        duration:1,
-    })
-
+tl.to(camera.position, { x: 5, y: -6, z: 8, duration: 1 })
+  .to(camera.position, { x: -6, y: -18, z: 8, duration: 1 })
+  .to(camera.position, { x: 5, y: -30, z: 10, duration: 1 });
 
 window.addEventListener('resize', () => {
     camera.aspect = window.innerWidth / window.innerHeight;
@@ -209,5 +212,4 @@ function animate() {
     renderer.render(scene, camera);
 }
 animate();
-
 </script>
