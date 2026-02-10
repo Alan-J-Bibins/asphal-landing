@@ -1,17 +1,212 @@
 ---
-
+import Layout from "../layouts/Layout.astro"
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+<Layout>
+    <div id="canvas-container" class="fixed top-0 left-0 w-full h-full -z-10 opacity-40"></div>
+    <main id="smooth-content">
+        <header class="border-b border-b-accent w-full p-6 bg-background/10 backdrop-blur-sm">
+            <div class="flex gap-2 items-center">
+                <img 
+                    src="/favicon.svg"
+                    height="200"
+                    class="w-14"
+                />
+                <h1 class="text-4xl bg-clip-text text-transparent bg-linear-to-r from-primary to-secondary [-webkit-text-stroke:0.2px_var(--color-accent)]">Asphal</h1>
+            </div>
+
+        </header>
+        <br />
+        <br />
+        <br />
+        <br />
+        <br />
+        <br />
+        <section class="flex flex-col justify-center items-center gap-3">
+            <h1 class="text-center text-6xl bg-clip-text text-transparent bg-linear-to-r from-primary to-secondary">Proactive Security,<br/> Automated Defense</h1>
+            <p class="text-xl text-center w-1/2">Asphal is an AI-native cybersecurity startup building autonomous systems that protect modern applications at both the source code and runtime levels.</p>
+            <button class="fancy-button">Secure Your Pipeline</button>
+        </section>
+
+        <div class="h-screen flex flex-col justify-center items-center">
+        </div>
+
+        <section id="section-two" class="h-screen flex items-center justify-start px-20">
+            <div class="w-1/3 p-10 bg-background/80 backdrop-blur-md border border-accent">
+                <h2 class="text-4xl font-bold mb-4">Don't fall for Cybertraps.</h2>
+                <p class="text-lg">Asphal identifies vulnerabilities before they become entry points.</p>
+            </div>
+        </section>
+
+    </main>
+</Layout>
+
+
+<script>
+import {gsap} from 'gsap';
+import { ScrollSmoother } from 'gsap/all';
+import { ScrollTrigger } from 'gsap/all';
+import * as THREE from 'three';
+
+gsap.registerPlugin(ScrollTrigger, ScrollSmoother);
+
+ScrollSmoother.create({
+    smooth: 1.5,
+    effects: true,
+    smoothTouch: 1,
+})
+
+const container = document.querySelector('#canvas-container') as HTMLDivElement;
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(90, window.innerWidth / window.innerHeight, 0.1, 1000);
+const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.setPixelRatio(window.devicePixelRatio);
+container.appendChild(renderer.domElement);
+
+// Lighting first
+const pointLight = new THREE.PointLight(0xffffff, 100);
+pointLight.position.set(0, -8, 5);
+scene.add(pointLight);
+
+// Objects second
+const asphalCore = new THREE.Group();
+
+const geometry = new THREE.IcosahedronGeometry(10, 2);
+const material = new THREE.MeshBasicMaterial({ 
+    color: 0xFC8374,
+    wireframe: true,
+    transparent: true,
+    opacity: .4,
+    side: THREE.BackSide,
+});
+const core = new THREE.Mesh(geometry, material);
+
+const pointsMaterial = new THREE.PointsMaterial({ color: 0xFC8374, size: 0.1 });
+const points = new THREE.Points(geometry, pointsMaterial);
+
+asphalCore.add(core);
+asphalCore.add(points);
+scene.add(asphalCore);
+
+camera.position.z = 5;
+
+const ditherVertex = `
+varying vec2 vUv;
+varying vec3 vNormal;
+void main() {
+vUv = uv;
+vNormal = normalize(normalMatrix * normal);
+gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+}
+`;
+
+const ditherFragment = `
+varying vec2 vUv;
+varying vec3 vNormal;
+uniform vec3 uLightPos; 
+uniform float uTime;
+
+float dither(vec2 position, float brightness) {
+int x = int(mod(position.x, 4.0));
+int y = int(mod(position.y, 4.0));
+float limit = 0.0;
+
+if (x == 0) {
+if (y == 0) limit = 0.0625; else if (y == 1) limit = 0.5625; else if (y == 2) limit = 0.1875; else limit = 0.6875;
+} else if (x == 1) {
+if (y == 0) limit = 0.8125; else if (y == 1) limit = 0.3125; else if (y == 2) limit = 0.9375; else limit = 0.4375;
+} else if (x == 2) {
+if (y == 0) limit = 0.25; else if (y == 1) limit = 0.75; else if (y == 2) limit = 0.125; else limit = 0.625;
+} else {
+if (y == 0) limit = 1.0; else if (y == 1) limit = 0.5; else if (y == 2) limit = 0.875; else limit = 0.375;
+}
+
+return brightness < limit ? 0.0 : 1.0;
+}
+
+void main() {
+// 1. Calculate lighting based on the real light position uniform
+// We normalize the vector from the object center (0,0,0) to the light position
+vec3 lightDir = normalize(uLightPos); 
+float light = dot(vNormal, lightDir) * 0.5 + 0.5;
+
+// 2. Get the dither value (0.0 or 1.0)
+float ditherVal = dither(gl_FragCoord.xy, light);
+
+// 3. Apply Asphal Brand Color (0xFC8374)
+vec3 color = vec3(0.98, 0.51, 0.45) * ditherVal;
+
+gl_FragColor = vec4(color, 1.0);
+}
+`;
+
+const cubeGeometry = new THREE.BoxGeometry(2,2,2);
+
+const cubeMaterial = new THREE.ShaderMaterial({
+    vertexShader: ditherVertex,
+    fragmentShader: ditherFragment,
+    uniforms: {
+        uTime: { value: 0 },
+        uLightPos: { value: pointLight.position } // Pass light position here
+    }
+});
+
+
+const cubeMesh = new THREE.Mesh(cubeGeometry,cubeMaterial);
+scene.add(cubeMesh);
+
+cubeMesh.position.set(7,-4,2)
+cubeMesh.rotation.set(1,1,2);
+
+
+gsap.to(asphalCore.rotation, {
+    y: Math.PI * 2,
+    x: Math.PI,
+    duration: 40,
+    repeat: -1,
+    ease: "none"
+});
+
+gsap.to(cubeMesh.rotation, {
+    y: Math.PI * 2,
+    x: Math.PI,
+    duration: 10,
+    repeat: -1,
+})
+
+const tl = gsap.timeline({
+    paused: true,
+    scrollTrigger: {
+        trigger: '#section-two',
+        markers:true,
+        scrub: true,
+    }
+})
+
+tl.fromTo(camera.position,
+    {
+        x:0,y:0,z:0
+    },
+    {
+        y:-5,
+        z: 8,
+        x: 5,
+        duration:1,
+    })
+
+
+window.addEventListener('resize', () => {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+});
+
+function animate() {
+    requestAnimationFrame(animate);
+    renderer.render(scene, camera);
+}
+animate();
+
+</script>

@@ -1,0 +1,46 @@
+@import "tailwindcss";
+
+@font-face {
+    font-family: 'Clash Display';
+    src: url('/fonts/ClashDisplay-Variable.woff2') format('woff2');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+@theme {
+    --font-sans: "Clash Display", sans-serif;
+    --color-text: #17130F;
+    --color-background: #FDFCFC;
+    --color-primary: #FECE99;
+    --color-secondary: #FFA97E;
+    --color-accent: #FC726B;
+}
+
+body {
+    @apply bg-background text-text;
+}
+
+@layer components {
+    .fancy-button {
+        @apply relative inline-block p-4 text-xl text-background font-bold hover:cursor-pointer;
+        isolation: isolate;
+
+        &::before,
+        &::after {
+            content: '';
+            @apply transition-colors absolute;
+            clip-path: polygon(15px 0, calc(100% - 15px) 0, 100% 15px, 100% calc(100% - 15px), calc(100% - 15px) 100%, 15px 100%, 0px calc(100% - 15px), 0 15px)
+        }
+
+        &::before {
+            @apply bg-primary inset-0 -z-2;
+        }
+
+        &::after {
+            @apply bg-linear-to-b from-primary to-secondary inset-0.5 -z-1;
+        }
+
+
+    }
+}
